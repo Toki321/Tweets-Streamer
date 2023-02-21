@@ -6,16 +6,22 @@ class TweetPrinterV2(tweepy.StreamingClient):
 
     top_100_coins_dict = get_top_100_cryptos()
     CHAT_ID = os.getenv("CHAT_TEST_ID")
+    client = getTweepyClient()
 
     def on_tweet(self, tweet):
-        if self.isCorrect(tweet.text):
+        ticker = self.isCorrect(tweet.text)
+        if ticker != False:
             url = f"https://twitter.com/{tweet.author_id}/status/{tweet.id}"
-            self.postUrlToTelegram(url)
+            userObject = self.client.get_user(id=tweet.author_id)
+            username = userObject[0]["username"]
+            fullName = userObject[0]["name"]
+            MESSAGE = f"{fullName} (@{username}) has tweeted ${ticker}\n\n{url}"
+            self.postUrlToTelegram(MESSAGE)
 
-    def postUrlToTelegram(self, url):
+    def postUrlToTelegram(self, MESSAGE):
         TOKEN = os.getenv("TELEGRAM_GHOUL_TOKEN")
-        print("sending tweet to tg: ", url)
-        call = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={self.CHAT_ID}&text={url}"
+        print("sending tweet to tg: ", MESSAGE)
+        call = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={self.CHAT_ID}&text={MESSAGE}"
         requests.get(call).json()
 
     def isCorrect(self, text):
@@ -29,7 +35,7 @@ class TweetPrinterV2(tweepy.StreamingClient):
         if tickerExists:
             threeLetters = ticker[:3]
             if not self.isInTop100(threeLetters):
-                return True
+                return ticker
         return False
 
     def isInTop100(self, threeLetteres):

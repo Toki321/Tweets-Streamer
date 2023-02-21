@@ -57,13 +57,13 @@ class TweetStreamer:
             #     ruleString += "from: " + account + " "
             #     if index != len(self.accountsList4) - 1:
             #         ruleString += "OR "
-            ruleString = '''from: 1225636783418830848 OR from: 1529009920187809792 OR from: 1292201662531211264 OR from: 1511052636988051464 OR from: 1451314985292939268 OR from: 1318528773969616897 OR from: 473622999 OR from: 897920537971871744 OR from: 1424441728770220037 OR from: 319980816 OR from: 1456891312230506496 OR from: 1576165268497244163 OR from: 1231038340616478720 OR from: 951854237276876801 OR from: 1411778399073443840 OR from: 1414218305343209477 OR from: 2966287497'''
+            ruleString = '''from: 1225636783418830848 OR from: 1529009920187809792 OR from: 1292201662531211264 OR from: 1511052636988051464 OR from: 1451314985292939268 OR from: 1318528773969616897 OR from: 473622999 OR from: 897920537971871744 OR from: 1424441728770220037 OR from: 319980816 OR from: 1456891312230506496 OR from: 1576165268497244163 OR from: 1231038340616478720 OR from: 951854237276876801 OR from: 1411778399073443840 OR from: 1414218305343209477'''
         elif flag == 4:
             # for account in self.accountsList4:
             #     ruleString += "from: " + account + " "
             #     if index != len(self.accountsList4) - 1:
             #         ruleString += "OR "
-            ruleString = '''from: 1414218305343209477 OR from: 1623236872402083841 OR from: 1448734133400842243 OR from: 1435842469971771393 OR from: 178652396 OR from: 1582601037550325760 OR from: 234748308'''
+            ruleString = '''from: 1414218305343209477 OR from: 1623236872402083841 OR from: 1448734133400842243 OR from: 1435842469971771393 OR from: 178652396 OR from: 1582601037550325760 OR from: 234748308 OR from: 2966287497'''
         print()
         print(ruleString)
         print()
@@ -78,4 +78,4 @@ class TweetStreamer:
         rules.append(StreamRule(self.ruleString(4)))
         print(rules)
         self.tweetPrinter.add_rules(rules)
-        self.tweetPrinter.filter(expansions="author_id", media_fields="url")
+        self.tweetPrinter.filter(expansions="author_id", tweet_fields="created_at")
