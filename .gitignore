@@ -1,0 +1,7 @@
+/.env
+/venv
+/.vscode
+/__pycache__
+/text-files
+/helpers/__pycache__
+/classes/__pycache__
