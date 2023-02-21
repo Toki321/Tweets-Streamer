@@ -12,8 +12,7 @@ def streamTweets():
     listAccounts2 = readIds('2')
     listAccounts3 = readIds('3')
     listAccounts4 = readIds('4')
-    listAccounts1.append("2966287497")
-    listAccounts1.append("1449328468227932163")
+
 
     BEARER_TOKEN = os.getenv("BEARER_TOKEN_1")
 
