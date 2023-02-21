@@ -17,6 +17,7 @@ class TweetPrinterV2(tweepy.StreamingClient):
             fullName = userObject[0]["name"]
             MESSAGE = f"{fullName} (@{username}) has tweeted ${ticker}\n\n{url}"
             self.postUrlToTelegram(MESSAGE)
+            self.check_keywords(tweet.text, ticker, url, fullName, username)
 
     def postUrlToTelegram(self, MESSAGE):
         TOKEN = os.getenv("TELEGRAM_GHOUL_TOKEN")
@@ -44,6 +45,17 @@ class TweetPrinterV2(tweepy.StreamingClient):
         except KeyError:
             return False
         return True
+    
+    def check_keywords(self, text, ticker, url, fullName, username):
+        keywords = ["ZK", "Arbitrum", "Optimism", "AI", "nftfi", "metaverse", "Chinese Alfa", "perps", "bsc", "solidly"]
+        for keyword in keywords:
+            if keyword.lower() in text.lower():
+                with open(f"../narratives/{keyword.lower()}.txt", "a") as f:
+                    f.write(f"${ticker} - {fullName}({username}) - {url}\n")
+            else:
+                with open(f"../narratives/unknown.txt", "a") as f:
+                    f.write(f"${ticker} - {fullName}({username}) - {url}\n")
+
 
     # def isCorrect(self, charArr):
     #     # if 3 letters and space
