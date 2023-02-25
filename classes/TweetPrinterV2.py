@@ -58,28 +58,26 @@ class TweetPrinterV2(tweepy.StreamingClient):
       return False
     return True
 
-  def check_keywords(self, text, ticker, url, userObject):
-    username = userObject[0]["username"]
-    fullName = userObject[0]["name"]
-    keywords = [
-      "zk", "arbitrum", "optimism", "ai", "nftfi", "metaverse", "chinese",
-      "perps", "bsc", "solidly"
-    ] 
-    flag = False
-    for keyword in keywords:
-      if keyword.lower() in text.lower():
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_dir,
-                                 "../narratives/" + keyword.lower() + ".txt")
-        with open(file_path, "a") as f:
-          f.write(f"${ticker} - {fullName}({username}) - {url}\n")
-        flag = True
-    if not flag:
-      script_dir = os.path.dirname(os.path.abspath(__file__))
-      file_path = os.path.join(script_dir, "../narratives/unknown" + ".txt")
-      with open(file_path, "a") as f:
-        f.write(f"${ticker} - {fullName}({username}) - {url}\n")
+
+  def checkForEachNarrative(self, tickers, text, narratives):
+    for narrative in narratives:
+        # keywords =  query for keywords for each narrative
+        keywords = []
+        for narrative in narratives:
+          self.checkForSingleNarrative(text, keywords)
+
+def checkForSingleNarrative(text, tickers, narrativeKeywords):
+
+    text = text.lower()
+
+    for keyword in narrativeKeywords:
+        if keyword.lower() in text:
+           pass
+           # write to narrative table the ticker
+
+def on_connect(self):
+  print("connected")
 
 
-  def on_connect(self):
-    print("connected")
+
+
