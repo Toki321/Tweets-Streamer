@@ -66,7 +66,7 @@ class TweetPrinterV2(tweepy.StreamingClient):
             session.add(ticker_found)
             session.commit()
             
-          
+
           relation = models.TweetsAndTickers(tweet_id=tweet_id, ticker_id=ticker_found.id)
           session.add(relation)
           session.commit()
@@ -101,6 +101,7 @@ class TweetPrinterV2(tweepy.StreamingClient):
     except KeyError:
       return False
     return True
+
 
   # def checkForEachNarrative(self, text, narratives): 
   #   for narrative in narratives:
