@@ -63,7 +63,7 @@ class TweetStreamer:
             #     ruleString += "from: " + account + " "
             #     if index != len(self.accountsList4) - 1:
             #         ruleString += "OR "
-            ruleString = '''from: 1414218305343209477 OR from: 1623236872402083841 OR from: 1448734133400842243 OR from: 1435842469971771393 OR from: 178652396 OR from: 1582601037550325760 OR from: 234748308 OR from: 2966287497'''
+            ruleString = '''from: 1414218305343209477 OR from: 1623236872402083841 OR from: 1448734133400842243 OR from: 1435842469971771393 OR from: 178652396 OR from: 1582601037550325760 OR from: 234748308 OR from: 2966287497 OR from: 1593781370333061121'''
         print()
         print(ruleString)
         print()

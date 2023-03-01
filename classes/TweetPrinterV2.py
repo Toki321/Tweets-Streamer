@@ -1,6 +1,11 @@
 import requests, os, tweepy
 from helpers.tweepyClient import getTweepyClient
 from helpers.top100coins import get_top_100_cryptos
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+import sqlalchemy as db
+from models import models
+
 
 
 class TweetPrinterV2(tweepy.StreamingClient):
@@ -23,11 +28,50 @@ class TweetPrinterV2(tweepy.StreamingClient):
       tickerString = ""
       for ticker in tickers:
         tickerString += "$" + ticker + ", "
-
+        
       MESSAGE = f"{fullName} (@{username}) has tweeted ${tickerString}\n\n{url}"
-
       self.postUrlToTelegram(MESSAGE)
-      # self.check_keywords(tweet.text, ticker, url, userObject)
+     
+      engine = db.create_engine('sqlite:///app.db', echo = True)
+      tweet_id = 0
+      twitter_user_found = None
+      with Session(engine) as session:
+        naratives = session.scalars(select(models.Narative).order_by(models.Narative.id)).all()
+        print(naratives)
+        for narative in naratives:
+          # narative = session.execute(select(models.Narative).filter_by(title=narative)).scalar_one()
+          id = self.checkForSingleNarrative(tweet.text, narative)
+          if id:
+            try:  
+              twitter_user_found = session.execute(select(models.TwitterUser).filter_by(user_twitter_id=tweet.author_id)).scalar_one()
+            except:
+              print("Add this user")
+
+            tweet_to_make = models.Tweet(twitter_user_id=twitter_user_found.id, narative_id=id, twitter_tweet_id=tweet.id)
+            session.add(tweet_to_make)
+            session.commit()
+            tweet_id = tweet_to_make.id
+            break
+          
+      for ticker in tickers:   
+        with Session(engine) as session:
+          ticker_found = None
+          try:
+            ticker_found = session.execute(select(models.Ticker).filter_by(ticker=ticker)).scalar_one()
+          except:
+            pass
+
+          if not ticker_found:
+            ticker_found = models.Ticker(ticker=ticker)
+            session.add(ticker_found)
+            session.commit()
+            
+          
+          relation = models.TweetsAndTickers(tweet_id=tweet_id, ticker_id=ticker_found.id)
+          session.add(relation)
+          session.commit()
+           
+        
     else:
       print("no ticker:", tweet.text, " ", url)
 
@@ -58,28 +102,18 @@ class TweetPrinterV2(tweepy.StreamingClient):
       return False
     return True
 
-  def check_keywords(self, text, ticker, url, userObject):
-    username = userObject[0]["username"]
-    fullName = userObject[0]["name"]
-    keywords = [
-      "zk", "arbitrum", "optimism", "ai", "nftfi", "metaverse", "chinese",
-      "perps", "bsc", "solidly"
-    ] 
-    flag = False
-    for keyword in keywords:
-      if keyword.lower() in text.lower():
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_dir,
-                                 "../narratives/" + keyword.lower() + ".txt")
-        with open(file_path, "a") as f:
-          f.write(f"${ticker} - {fullName}({username}) - {url}\n")
-        flag = True
-    if not flag:
-      script_dir = os.path.dirname(os.path.abspath(__file__))
-      file_path = os.path.join(script_dir, "../narratives/unknown" + ".txt")
-      with open(file_path, "a") as f:
-        f.write(f"${ticker} - {fullName}({username}) - {url}\n")
+  # def checkForEachNarrative(self, text, narratives): 
+  #   for narrative in narratives:
+  #       # keywords =  query for keywords for each narrative
+  #       self.checkForSingleNarrative(text, narrative)
 
-
+  def checkForSingleNarrative(self, text, narrative):
+    text = text.lower()
+    print("narative: ",narrative, " type: ", type(narrative))
+    for keyword in narrative.keywords:
+        if keyword.keyword.lower() in text:
+          return narrative.id
+    return 0
+        
   def on_connect(self):
     print("connected")

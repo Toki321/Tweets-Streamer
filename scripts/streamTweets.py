@@ -1,6 +1,6 @@
 import sys, os
 
-sys.path.append("D:\\Coding Projects\\gemFinderNotifier\\tweet-notifier")
+sys.path.append("C:\\Dushans stuff\\FLASK\\Tweets-Streamer\\")
 
 from classes.TweetStreamer import TweetStreamer
 from helpers.idsToTrack import readIds
